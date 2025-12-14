@@ -1,0 +1,61 @@
+name: Deploy Static Site
+
+# Only run on pushes to master branch
+on:
+  push:
+    branches:
+      - master
+    paths:
+      # Only if static-site files change
+      - 'projects/static-site/**'
+      - 'infrastructure/**'
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      # Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Set up SSH
+     # - name: Set up SSH
+       # run: |
+         # mkdir -p ~/.ssh
+         # echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+         #chmod 600 ~/.ssh/deploy_key
+          #ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+      
+      # Deploy to server
+      - name: Deploy (local on server)
+        run: |
+          set -e
+          echo "Starting deployment..."
+
+          cd /home/deploy/mywebclass_hosting
+          git pull origin master
+
+          cd /home/deploy/mywebclass_hosting/infrastructure
+          docker compose up -d --build static-site
+
+          docker compose ps
+          echo "Deployment completed successfully! ✅"
+
+      
+      # Verify deployment
+      - name: Verify deployment
+        run: |
+          # Check if site is responding
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }})
+          
+          if [ $status_code -eq 200 ]; then
+            echo "✅ Site is responding (HTTP $status_code)"
+          else
+            echo "❌ Site returned HTTP $status_code"
+            exit 1
+          fi
+      
+      # Cleanup
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
