@@ -45,10 +45,10 @@ jobs:
       # Verify deployment
       - name: Verify deployment
         run: |
-          # Check if site is responding
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.SERVER_HOST }})
-          
-          if [ $status_code -eq 200 ]; then
+          # Follow redirects (HTTP -> HTTPS)
+          status_code=$(curl -L -s -o /dev/null -w "%{http_code}" "http://${{ secrets.SERVER_HOST }}" --max-time 15)
+
+          if [ "$status_code" = "200" ]; then
             echo "✅ Site is responding (HTTP $status_code)"
           else
             echo "❌ Site returned HTTP $status_code"
