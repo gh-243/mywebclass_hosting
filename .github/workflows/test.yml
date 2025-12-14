@@ -1,0 +1,28 @@
+name: Test Workflow
+
+# Run on every push to any branch
+on: [push]
+
+jobs:
+  test:
+    # Use GitHub's Ubuntu runner
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Step 2: Show system info
+      - name: Show system info
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          whoami
+          pwd
+          ls -la
+      
+      # Step 3: Simple test
+      - name: Run simple test
+        run: echo "Test passed! ✅"
