@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Static Site</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Gerard's Portfolio</h1>
+        <p>Software Developer | Designer | Creator</p>
+    </header>
+    <h1>Welcome to My Static Site</h1>
+    <p>This is deployed from Docker using Nginx!</p>
+
+    <button id="clickBtn">Click Me</button>
+    
+    <section id="users">
+        <h2>Users from API</h2>
+        <div id="user-list">Loading...</div>
+    </section>
+ 
+    <script src="script.js"></script>
+    <script>
+        fetch('https://api.gerardherrera.dev/api/users')
+          .then(response => response.json())
+          .then(users => {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = users.map(user => `
+              <div class="user">
+                <strong>${user.name}</strong> - ${user.email}
+              </div>
+            `).join('');
+          })
+          .catch(error => {
+            console.error('Error fetching users:', error);
+            document.getElementById('user-list').innerHTML = 'Error loading users';
+          });
+    </script>
+</body>
+</html>

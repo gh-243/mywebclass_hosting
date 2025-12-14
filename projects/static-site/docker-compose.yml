@@ -4,7 +4,7 @@ services:
     container_name: static-site
     restart: unless-stopped
     volumes:
-      - ./html:/usr/share/nginx/html:ro
+      - ./public:/usr/share/nginx/html:ro
     networks:
       - web
     healthcheck:

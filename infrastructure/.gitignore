@@ -1,7 +1,14 @@
 # Ignore environment file with secrets
 .env
+*.env
+!.env.example
 
 # Ignore Caddy data directories (created by Docker)
 data/
 config/
 logs/
+*.backup
+backup.sql
+*.sql
+*.sql.gz
+backups/

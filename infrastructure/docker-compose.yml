@@ -18,8 +18,9 @@ services:
       - caddy_logs:/var/log/caddy
     networks:
       - web
+      - internal
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:2019/metrics"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:2019/metrics"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -70,6 +71,28 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
+  static-site:
+    build:
+      context: ../projects/static-site
+    container_name: static-site
+    restart: unless-stopped
+    networks:
+      - web
+
+  backend:
+    build:
+      context: ../projects/backend
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      - postgres
+    networks:
+      - internal
+
   # Watchtower - Automated Container Updates (OPTIONAL)
   # Uncomment if your Docker API version is compatible (1.44+)
   # Check with: docker version
@@ -111,3 +134,4 @@ volumes:
     name: postgres_data
   pgadmin_data:
     name: pgadmin_data
+

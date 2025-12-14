@@ -1,11 +1,17 @@
 # Global options
 {
-    email admin@mywebclass.org
-    admin off
+    email gerardherrera84@gmail.com
+   # admin off
 }
 
+# API Backend
+api.gerardherrera.dev {
+    reverse_proxy backend:3000
+}
+
+
 # Main website
-www.mywebclass.org {
+www.gerardherrera.dev, gerardherrera.dev {
     reverse_proxy static-site:80
     
     encode gzip
@@ -30,7 +36,7 @@ www.mywebclass.org {
 # Option 1: Use basic auth (uncomment below)
 # Option 2: Restrict to specific IPs
 # Option 3: Use VPN and don't expose at all
-db.mywebclass.org {
+db.gerardherrera.dev {
     reverse_proxy pgadmin:80
     
     encode gzip
@@ -46,7 +52,7 @@ db.mywebclass.org {
     # respond @blocked "Access Denied" 403
     
     header {
-        X-Frame-Options "DENY"
+        X-Frame-Options "SAMEORIGIN"
         X-Content-Type-Options "nosniff"
     }
     
