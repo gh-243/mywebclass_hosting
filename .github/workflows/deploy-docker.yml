@@ -1,0 +1,36 @@
+name: Deploy Docker App
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/deploy-docker.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy stack with Docker Compose (on server)
+        run: |
+          set -e
+          echo "🚀 Deploying infrastructure with docker compose..."
+
+          cd /home/deploy/mywebclass_hosting
+          git pull origin master
+
+          cd infrastructure
+          docker compose up -d --build
+          docker compose ps
+
+      - name: Health check (static + api)
+        run: |
+          curl -fsS --max-time 15 https://gerardherrera.dev >/dev/null
+          curl -fsS --max-time 15 https://api.gerardherrera.dev/health >/dev/null
+          echo "✅ Health checks passed"
+
